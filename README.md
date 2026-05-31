@@ -1,6 +1,6 @@
 # GBeauty Inventory Tracker
 
-GBeauty Inventory Tracker is an inventory tracker for a beauty supply store.
+GBeauty Inventory Tracker is an inventory tracker for GBeauty beauty supply store.
 
 # Sprint 1 Purpose
 
@@ -16,7 +16,10 @@ This is the client-side prototype. It uses HTML, CSS, and JavaScript to create a
 
 # Products
 
-- Edge Control - $6.99
+Hair Care:
+- Edge Control - $6.99 
 - Hair Growth Oil - $12.99
+
+Accessories:
 - Pink Bonnet - $9.99
 
