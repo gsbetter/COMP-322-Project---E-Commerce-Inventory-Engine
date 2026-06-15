@@ -1,56 +1,40 @@
-// Products for the beauty supply inventory
-let products = [
-  {
-    name: "Edge Control",
-    category: "Hair Care",
-    quantity: 25,
-    price: 6.99
-  },
-  {
-    name: "Hair Growth Oil",
-    category: "Hair Care",
-    quantity: 15,
-    price: 12.99
-  },
-  {
-    name: "Pink Bonnet",
-    category: "Accessories",
-    quantity: 20,
-    price: 9.99
-  }
-];
+// products for beauty supply inventory
 
-// Get elements from the HTML page
+let products = [];
+
 const productForm = document.getElementById("product-form");
-const productName = document.getElementById("product-name");
-const productCategory = document.getElementById("product-category");
-const productQuantity = document.getElementById("product-quantity");
-const productPrice = document.getElementById("product-price");
 const inventoryBody = document.getElementById("inventory-body");
 
 const totalProducts = document.getElementById("total-products");
 const totalItems = document.getElementById("total-items");
 const totalValue = document.getElementById("total-value");
 
-// Load saved products when the page opens
+// load products from server
 function loadProducts() {
-  const savedProducts = localStorage.getItem("gbeautyProducts");
 
-  if (savedProducts) {
-    products = JSON.parse(savedProducts);
-  }
+  fetch("/api/products")
+    .then(function (response) {
+      return response.json();
+    })
+    .then(function (data) {
+
+      products = data;
+
+      displayProducts();
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+
 }
 
-// Save products to localStorage
-function saveProducts() {
-  localStorage.setItem("gbeautyProducts", JSON.stringify(products));
-}
-
-// Display products in the table
+// display products
 function displayProducts() {
+
   inventoryBody.innerHTML = "";
 
   for (let i = 0; i < products.length; i++) {
+
     const product = products[i];
 
     const row = document.createElement("tr");
@@ -60,7 +44,11 @@ function displayProducts() {
       <td>${product.category}</td>
       <td>${product.quantity}</td>
       <td>$${product.price.toFixed(2)}</td>
-      <td><button class="delete-btn" onclick="deleteProduct(${i})">Delete</button></td>
+      <td>
+        <button onclick="deleteProduct(${i})">
+          Delete
+        </button>
+      </td>
     `;
 
     inventoryBody.appendChild(row);
@@ -69,48 +57,67 @@ function displayProducts() {
   updateSummary();
 }
 
-// Update the inventory numbers
+// update summary
 function updateSummary() {
+
   let itemCount = 0;
   let inventoryValue = 0;
 
   for (let i = 0; i < products.length; i++) {
+
     itemCount += products[i].quantity;
-    inventoryValue += products[i].quantity * products[i].price;
+
+    inventoryValue +=
+      products[i].quantity *
+      products[i].price;
   }
 
   totalProducts.textContent = products.length;
   totalItems.textContent = itemCount;
-  totalValue.textContent = "$" + inventoryValue.toFixed(2);
+  totalValue.textContent =
+    "$" + inventoryValue.toFixed(2);
 }
 
-// Add a new product from the form
-productForm.addEventListener("submit", function(event) {
+//add product
+productForm.addEventListener("submit", function (event) {
+
   event.preventDefault();
 
   const newProduct = {
-    name: productName.value,
-    category: productCategory.value,
-    quantity: Number(productQuantity.value),
-    price: Number(productPrice.value)
+    name: document.getElementById("product-name").value,
+    category: document.getElementById("product-category").value,
+    quantity: document.getElementById("product-quantity").value,
+    price: document.getElementById("product-price").value
   };
 
-  products.push(newProduct);
+  fetch("/api/products", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(newProduct)
+  })
+    .then(function () {
 
-  saveProducts();
-  displayProducts();
+      productForm.reset();
 
-  productForm.reset();
+      loadProducts();
+    });
+
 });
 
-// Delete a product by its position in the array
+// delete product
 function deleteProduct(index) {
-  products.splice(index, 1);
 
-  saveProducts();
-  displayProducts();
+  fetch("/api/products/" + index, {
+    method: "DELETE"
+  })
+    .then(function () {
+
+      loadProducts();
+    });
+
 }
 
-// Start the page
+// start page
 loadProducts();
-displayProducts();
