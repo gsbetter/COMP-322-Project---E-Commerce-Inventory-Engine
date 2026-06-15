@@ -9,7 +9,7 @@ const PORT = 3000;
 // allow server to read JSON data
 app.use(express.json());
 
-// serrve files from public folder
+// serve files from public folder
 app.use(express.static(path.join(__dirname, "public")));
 
 // product data stored on the server
