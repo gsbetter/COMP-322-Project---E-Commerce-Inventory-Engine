@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GBeauty Inventory Manager</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="site-header">
+  <h1>GBeauty Inventory Manager</h1>
+  <p>A simple inventory tracker for a beauty supply store.</p>
+</header>
+
+<main>
+
+  <section class="card">
+    <h2>Add a Product</h2>
+
+    <form id="product-form">
+
+      <label>Product Name</label>
+      <input type="text" id="product-name" required>
+
+      <label>Category</label>
+      <input type="text" id="product-category" required>
+
+      <label>Quantity</label>
+      <input type="number" id="product-quantity" required>
+
+      <label>Price</label>
+      <input type="number" id="product-price" step="0.01" required>
+
+      <button type="submit">Add Product</button>
+
+    </form>
+  </section>
+
+  <section class="card">
+    <h2>Inventory Summary</h2>
+
+    <p>Total Products: <span id="total-products">0</span></p>
+    <p>Total Items: <span id="total-items">0</span></p>
+    <p>Total Value: <span id="total-value">$0.00</span></p>
+
+  </section>
+
+  <section class="card">
+    <h2>Current Inventory</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Category</th>
+          <th>Quantity</th>
+          <th>Price</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+
+      <tbody id="inventory-body"></tbody>
+
+    </table>
+  </section>
+
+</main>
+
+<script src="script.js"></script>
+
+</body>
+</html>
