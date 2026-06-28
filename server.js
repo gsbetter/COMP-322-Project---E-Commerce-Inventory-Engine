@@ -2,9 +2,11 @@
 
 const express = require("express");
 const path = require("path");
+const { PrismaClient } = require("@prisma/client");
 
 const app = express();
 const PORT = 3000;
+const prisma = new PrismaClient();
 
 // allow server to read JSON data
 app.use(express.json());
@@ -12,62 +14,62 @@ app.use(express.json());
 // serve files from public folder
 app.use(express.static(path.join(__dirname, "public")));
 
-// product data stored on the server
-let products = [
-  {
-    name: "Edge Control",
-    category: "Hair Care",
-    quantity: 25,
-    price: 6.99
-  },
-  {
-    name: "Hair Growth Oil",
-    category: "Hair Care",
-    quantity: 15,
-    price: 12.99
-  },
-  {
-    name: "Satin Bonnet",
-    category: "Accessories",
-    quantity: 20,
-    price: 9.99
+// get all products from the database
+app.get("/api/products", async function (req, res) {
+  try {
+    const products = await prisma.product.findMany({
+      orderBy: {
+        id: "asc"
+      }
+    });
+
+    res.json(products);
+  } catch (error) {
+    res.status(500).json({
+      error: "Could not get products"
+    });
   }
-];
-
-// get all products
-app.get("/api/products", function (req, res) {
-  res.json(products);
 });
 
-// post a new product
-app.post("/api/products", function (req, res) {
-  const newProduct = {
-    name: req.body.name,
-    category: req.body.category,
-    quantity: Number(req.body.quantity),
-    price: Number(req.body.price)
-  };
+// post a new product to the database
+app.post("/api/products", async function (req, res) {
+  try {
+    const newProduct = await prisma.product.create({
+      data: {
+        name: req.body.name,
+        category: req.body.category,
+        quantity: Number(req.body.quantity),
+        price: Number(req.body.price)
+      }
+    });
 
-  products.push(newProduct);
-
-  res.status(201).json(newProduct);
+    res.status(201).json(newProduct);
+  } catch (error) {
+    res.status(400).json({
+      error: "Could not add product"
+    });
+  }
 });
 
-// delete a product
-app.delete("/api/products/:index", function (req, res) {
-  const index = Number(req.params.index);
+// delete a product from the database
+app.delete("/api/products/:id", async function (req, res) {
+  try {
+    const id = Number(req.params.id);
 
-  if (index < 0 || index >= products.length) {
-    return res.status(404).json({
+    await prisma.product.delete({
+      where: {
+        id: id
+      }
+    });
+
+    res.json({
+      message: "Product deleted"
+    });
+  } catch (error) {
+    res.status(404).json({
       error: "Product not found"
     });
   }
-
-  products.splice(index, 1);
-
-  res.json({
-    message: "Product deleted"
-  });
 });
 
 // 404 handling
