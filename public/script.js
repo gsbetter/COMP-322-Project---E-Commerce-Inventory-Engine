@@ -45,7 +45,7 @@ function displayProducts() {
       <td>${product.quantity}</td>
       <td>$${product.price.toFixed(2)}</td>
       <td>
-        <button onclick="deleteProduct(${i})">
+        <button onclick="deleteProduct(${product.id})">
           Delete
         </button>
       </td>
@@ -107,9 +107,9 @@ productForm.addEventListener("submit", function (event) {
 });
 
 // delete product
-function deleteProduct(index) {
+function deleteProduct(id) {
 
-  fetch("/api/products/" + index, {
+  fetch("/api/products/" + id, {
     method: "DELETE"
   })
     .then(function () {
