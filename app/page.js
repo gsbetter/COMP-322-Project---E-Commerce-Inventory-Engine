@@ -1,6 +1,6 @@
 "use client";
 
-// this is the main page for GBeauty Inventory Manager
+// this is the main page for GBeauty Inventory Manager.
 
 import { useEffect, useState } from "react";
 import ProductForm from "../components/productform";
