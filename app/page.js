@@ -6,12 +6,14 @@ import { useEffect, useState } from "react";
 import ProductForm from "../components/productform";
 import InventorySummary from "../components/InventorySummary";
 import ProductList from "../components/ProductList";
+import ProductSuggestions from "../components/ProductSuggestions";
 
 export default function Home() {
   const [products, setProducts] = useState([]);
   const [message, setMessage] = useState("Loading products...");
+  const [suggestions, setSuggestions] = useState([]);
 
-  // get products from the API
+  // get products from the database API
   function loadProducts() {
     fetch("/api/products")
       .then(function (response) {
@@ -31,9 +33,28 @@ export default function Home() {
       });
   }
 
-  // load products when the page first opens
+  // get product suggestions from the external API
+  function loadSuggestions() {
+    fetch("/api/suggestions")
+      .then(function (response) {
+        if (!response.ok) {
+          throw new Error("Could not load suggestions");
+        }
+
+        return response.json();
+      })
+      .then(function (data) {
+        setSuggestions(data);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
+
+  // load products and suggestions when the page first opens
   useEffect(function () {
     loadProducts();
+    loadSuggestions();
   }, []);
 
   // delete a product using its database id
@@ -77,6 +98,8 @@ export default function Home() {
           products={products}
           onDelete={deleteProduct}
         />
+
+        <ProductSuggestions suggestions={suggestions} />
       </main>
     </>
   );
